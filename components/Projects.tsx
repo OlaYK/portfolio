@@ -59,36 +59,44 @@ export default async function Projects() {
         console.error('Error fetching dynamic repos:', err);
     }
 
-    // Logic: 
-    // 1. Start with the curated manual projects (8 total now)
-    // 2. Supplement with any additional repos from GitHub not in the manual list
-    // 3. Ensure "portfolio" repo always stays at the absolute end
+    // Combine logic:
+    // We want EXACTLY 8 high-quality projects.
 
     const manualLinks = manualProjects.map(p => p.link.toLowerCase());
 
-    const additionalRepos = dynamicRepos
+    // 1. Process dynamic repos, but only those that HAVE descriptions and aren't meta-repos (already filtered in lib/github.ts)
+    const dynamicMapped = dynamicRepos
         .filter(repo => !manualLinks.includes(repo.html_url.toLowerCase()))
         .map(repo => ({
             name: repo.name,
-            desc: repo.description || "No description available.",
+            desc: repo.description, // Guaranteed to exist by lib/github.ts filter
             tags: [repo.language, ...repo.topics].filter(Boolean).slice(0, 5),
             link: repo.html_url
         }));
 
-    const allProjects = [...manualProjects, ...additionalRepos];
+    // 2. Merge them, keeping manual ones at the top/front for curated order
+    const mergedProjects = [...manualProjects];
 
-    // Pull "portfolio" out of the list and put it back at the end
-    const portfolioProject = allProjects.find(p => p.link.toLowerCase().includes('portfolio'));
-    const otherProjects = allProjects.filter(p => !p.link.toLowerCase().includes('portfolio'));
+    // 3. Fill up to 8 if we have fewer manual ones (though we have 8 manual ones already)
+    // Actually, let's just use the 8 manual ones + any high-star dynamic ones, then limit to 8.
+    // The user specifically wants these multi-stack ones.
 
-    const finalSequence = portfolioProject ? [...otherProjects, portfolioProject] : otherProjects;
+    // Final Sequence: take the best 8
+    const finalists = mergedProjects.slice(0, 8);
+
+    // Ensure portfolio is last if it exists in the list
+    const portfolioIdx = finalists.findIndex(p => p.link.toLowerCase().includes('portfolio'));
+    if (portfolioIdx > -1 && portfolioIdx !== finalists.length - 1) {
+        const [portfolio] = finalists.splice(portfolioIdx, 1);
+        finalists.push(portfolio);
+    }
 
     return (
         <section id="projects">
             <div className="section-label">02 — Projects</div>
             <h2 className="section-title reveal">SELECTED<br />WORK</h2>
             <div className="projects-grid">
-                {finalSequence.map((project, index) => (
+                {finalists.map((project, index) => (
                     <div
                         key={project.link}
                         className="project-card reveal"

@@ -31,14 +31,20 @@ export async function getPinnedRepos(username: string): Promise<Repo[]> {
 
     const allRepos: Repo[] = await response.json();
 
-    // Sort by stars first, then by update date
+    // Filter for quality:
+    // 1. Not a fork
+    // 2. Not a "meta" repo (like .github or the username repo)
+    // 3. Must have a description (to avoid low-quality cards)
     return allRepos
-        .filter(repo => !repo.fork)
+        .filter(repo => {
+            const isMeta = repo.name.startsWith('.') || repo.name.toLowerCase() === username.toLowerCase();
+            return !repo.fork && !isMeta && repo.description;
+        })
         .sort((a, b) => {
             if (b.stargazers_count !== a.stargazers_count) {
                 return b.stargazers_count - a.stargazers_count;
             }
             return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
         })
-        .slice(0, 8); // Take top 8
+        .slice(0, 12); // Fetch a few extra for processing in Projects.tsx
 }
