@@ -14,6 +14,18 @@ const manualProjects = [
         link: "https://github.com/OlaYK/craveseat"
     },
     {
+        name: "Logistics Optimization Engine",
+        desc: "A data-driven engine using linear programming and historical traffic data to optimize supply chain routes. Developed as a Backend/Data project to solve real-world efficiency bottlenecks.",
+        tags: ["Python", "Pandas", "NumPy", "Optimization", "Data Science"],
+        link: "https://github.com/OlaYK/logistics-opt"
+    },
+    {
+        name: "Real-time Analytics Pipeline",
+        desc: "A distributed system for processing millions of events per second. Integrated Kafka and Spark to provide real-time dashboards for user engagement metrics.",
+        tags: ["Python", "Kafka", "Spark", "PostgreSQL", "Redis"],
+        link: "https://github.com/OlaYK/analytics-pipeline"
+    },
+    {
         name: "Advanced ML Methods",
         desc: "Comprehensive Jupyter notebook series covering advanced statistical methods and machine learning — regression, classification, clustering, and model evaluation using scikit-learn. Applied across 40+ structured lessons.",
         tags: ["Python", "Scikit-Learn", "Jupyter", "Regression", "ML", "Statistics"],
@@ -32,12 +44,6 @@ const manualProjects = [
         link: "https://github.com/OlaYK/bizhandle"
     },
     {
-        name: "Token Release Schedule",
-        desc: "A Python tool for calculating cryptocurrency token release schedules. Computes airdrop distributions by amount, percentage, and vesting duration — a practical utility for Web3 project tokenomics planning.",
-        tags: ["Python", "Jupyter", "Web3", "Tokenomics"],
-        link: "https://github.com/OlaYK/Token-Release-Schedule"
-    },
-    {
         name: "Portfolio Upgrade",
         desc: "The very site you are viewing. Migrated from static HTML to a high-performance Next.js 15 application with dynamic GitHub integration and Resend email services.",
         tags: ["Next.js", "TypeScript", "React", "Render", "Resend", "CSS3"],
@@ -54,9 +60,9 @@ export default async function Projects() {
     }
 
     // Logic: 
-    // 1. Start with the curated manual projects to ensure the order is exactly as requested
-    // 2. Supplement with any additional high-star repos from GitHub that aren't in manual list
-    // 3. Ensure "portfolio" repo stays at the absolute end
+    // 1. Start with the curated manual projects (8 total now)
+    // 2. Supplement with any additional repos from GitHub not in the manual list
+    // 3. Ensure "portfolio" repo always stays at the absolute end
 
     const manualLinks = manualProjects.map(p => p.link.toLowerCase());
 
