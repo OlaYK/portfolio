@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: ola-portfolio
+    runtime: node
+    plan: free
+    buildCommand: npm install; npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: RESEND_API_KEY
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
