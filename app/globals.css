@@ -51,6 +51,14 @@
   padding: 0;
 }
 
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  position: relative;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -61,7 +69,6 @@ body {
   font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.7;
-  overflow-x: hidden;
   transition: background 0.3s ease, color 0.3s ease;
 }
 
@@ -80,16 +87,18 @@ nav {
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
   width: 100%;
   z-index: 1000;
-  padding: 20px 60px;
+  padding: 16px 6%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: var(--surface);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
 }
 
 .nav-logo {
@@ -235,7 +244,7 @@ nav {
 
 .hero-name {
   font-family: var(--font-display);
-  font-size: clamp(48px, 10vw, 120px);
+  font-size: clamp(42px, 12vw, 120px);
   line-height: 0.95;
   letter-spacing: 0.02em;
   color: var(--text);
@@ -1093,7 +1102,7 @@ footer {
 
 @media (max-width: 900px) {
   nav {
-    padding: 18px 28px;
+    padding: 14px 20px;
   }
 
   section {
