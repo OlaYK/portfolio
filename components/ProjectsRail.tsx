@@ -1,6 +1,6 @@
 'use client';
 
-import { CSSProperties, useMemo, useState } from 'react';
+import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 
 type FocusTone = 'backend' | 'data' | 'backend-data' | 'fullstack' | 'general';
 
@@ -18,24 +18,74 @@ interface ProjectsRailProps {
 }
 
 export default function ProjectsRail({ projects }: ProjectsRailProps) {
-    const [activeIndex, setActiveIndex] = useState(0);
-    const maxIndex = Math.max(projects.length - 1, 0);
-    const safeActiveIndex = Math.min(activeIndex, maxIndex);
+    const viewportRef = useRef<HTMLDivElement>(null);
+    const trackRef = useRef<HTMLDivElement>(null);
+    const [offset, setOffset] = useState(0);
+    const [stepSize, setStepSize] = useState(0);
+    const [maxOffset, setMaxOffset] = useState(0);
+
+    useEffect(() => {
+        function measure() {
+            if (!viewportRef.current || !trackRef.current) {
+                return;
+            }
+
+            const viewportWidth = viewportRef.current.clientWidth;
+            const trackWidth = trackRef.current.scrollWidth;
+            const firstCard = trackRef.current.querySelector<HTMLElement>('.project-card');
+            const computedStyle = window.getComputedStyle(trackRef.current);
+            const gap = parseFloat(computedStyle.gap || '0') || 0;
+            const cardWidth = firstCard?.offsetWidth || 0;
+            const step = cardWidth + gap;
+            const nextMaxOffset = Math.max(trackWidth - viewportWidth, 0);
+
+            setStepSize(step);
+            setMaxOffset(nextMaxOffset);
+            setOffset((current) => Math.min(current, nextMaxOffset));
+        }
+
+        measure();
+
+        const resizeObserver = new ResizeObserver(measure);
+        if (viewportRef.current) {
+            resizeObserver.observe(viewportRef.current);
+        }
+        if (trackRef.current) {
+            resizeObserver.observe(trackRef.current);
+            const firstCard = trackRef.current.querySelector<HTMLElement>('.project-card');
+            if (firstCard) {
+                resizeObserver.observe(firstCard);
+            }
+        }
+
+        window.addEventListener('resize', measure);
+        return () => {
+            resizeObserver.disconnect();
+            window.removeEventListener('resize', measure);
+        };
+    }, [projects.length]);
+
+    const activeIndex =
+        projects.length > 0 && stepSize > 0 ? Math.min(projects.length - 1, Math.round(offset / stepSize)) : 0;
 
     const trackStyle = useMemo<CSSProperties>(() => {
         return {
-            transform: `translate3d(calc(-1 * ${safeActiveIndex} * (var(--project-card-width) + var(--project-card-gap))), 0, 0)`
+            transform: `translate3d(-${offset}px, 0, 0)`
         };
-    }, [safeActiveIndex]);
+    }, [offset]);
 
     function move(direction: 1 | -1) {
-        setActiveIndex((current) => {
-            const next = current + direction;
+        if (stepSize <= 0) {
+            return;
+        }
+
+        setOffset((current) => {
+            const next = current + direction * stepSize;
             if (next < 0) {
                 return 0;
             }
-            if (next > maxIndex) {
-                return maxIndex;
+            if (next > maxOffset) {
+                return maxOffset;
             }
             return next;
         });
@@ -48,17 +98,17 @@ export default function ProjectsRail({ projects }: ProjectsRailProps) {
                 className="projects-side-btn left"
                 onClick={() => move(-1)}
                 aria-label="Show previous projects"
-                disabled={safeActiveIndex === 0}
+                disabled={offset <= 0}
             >
                 &larr;
             </button>
 
-            <div className="projects-viewport">
-                <div className="projects-grid" style={trackStyle}>
+            <div ref={viewportRef} className="projects-viewport">
+                <div ref={trackRef} className="projects-grid" style={trackStyle}>
                     {projects.map((project, index) => (
                         <div
                             key={project.link}
-                            className={`project-card ${index === safeActiveIndex ? 'active' : ''}`}
+                            className={`project-card ${index === activeIndex ? 'active' : ''}`}
                         >
                             <div className="project-num">{(index + 1).toString().padStart(3, '0')}</div>
                             <div className={`project-focus ${project.focusTone}`}>{project.focusLabel}</div>
@@ -84,13 +134,13 @@ export default function ProjectsRail({ projects }: ProjectsRailProps) {
                 className="projects-side-btn right"
                 onClick={() => move(1)}
                 aria-label="Show next projects"
-                disabled={safeActiveIndex === maxIndex}
+                disabled={offset >= maxOffset - 1}
             >
                 &rarr;
             </button>
 
             <div className="projects-position" aria-live="polite">
-                {safeActiveIndex + 1} / {projects.length}
+                {activeIndex + 1} / {projects.length}
             </div>
         </div>
     );
