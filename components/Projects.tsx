@@ -1,137 +1,191 @@
-import { getPinnedRepos, Repo } from '@/lib/github';
+import { getPinnedRepos, RankedRepo } from '@/lib/github';
+import ProjectsRail from '@/components/ProjectsRail';
 
-const manualProjects = [
+type FocusTone = 'backend' | 'data' | 'backend-data' | 'fullstack' | 'general';
+
+type ProjectCard = {
+    name: string;
+    desc: string;
+    tags: string[];
+    link: string;
+    focusLabel: string;
+    focusTone: FocusTone;
+};
+
+type LockedProject = {
+    url: string;
+    repoName: string;
+    aliases?: string[];
+    displayName: string;
+    badge: FocusTone;
+    description: string;
+    stack: string[];
+};
+
+const LOCKED_PROJECTS: LockedProject[] = [
     {
-        name: "Polymarket Copy Bot",
-        desc: "Production-grade automated copy trading service for Polymarket prediction markets. FastAPI backend with background workers (watcher + executor), slippage protection, position sizing, and P&L reporting. Deployed on Render with PostgreSQL.",
-        tags: ["Python", "FastAPI", "Web3", "PostgreSQL", "Polygon", "WebSockets"],
-        link: "https://github.com/OlaYK/polymarket_copy_bot"
+        url: 'https://github.com/OlaYK/craveseat',
+        repoName: 'craveseat',
+        displayName: 'Craveseat',
+        badge: 'backend',
+        description:
+            'Backend-forward food platform with role-based APIs for customers and vendors, including auth, location, notifications, and media pipelines.',
+        stack: ['Python', 'FastAPI', 'PostgreSQL', 'Alembic', 'Cloudinary']
     },
     {
-        name: "Craveseat",
-        desc: "A full-stack food platform backend with dual-role architecture supporting both customers and vendors. Features authentication, cravings, location mapping, notifications, and image uploads via Cloudinary. Live on Vercel.",
-        tags: ["Python", "FastAPI", "PostgreSQL", "Alembic", "Cloudinary", "Next.js"],
-        link: "https://github.com/OlaYK/craveseat"
+        url: 'https://github.com/OlaYK/sholly',
+        repoName: 'sholly',
+        displayName: 'Sholly',
+        badge: 'fullstack',
+        description:
+            'Full-stack application with backend services and UI workflows, built for production-style feature delivery and iteration.',
+        stack: ['TypeScript', 'Next.js', 'React', 'Node.js', 'PostgreSQL']
     },
     {
-        name: "Logistics Optimization Engine",
-        desc: "A data-driven engine using linear programming and historical traffic data to optimize supply chain routes. Developed as a Backend/Data project to solve real-world efficiency bottlenecks.",
-        tags: ["Python", "Pandas", "NumPy", "Optimization", "Data Science"],
-        link: "https://github.com/OlaYK/logistics-opt"
+        url: 'https://github.com/OlaYK/Part_5_Advanced_Statistical_Methods_-Machine_Learning-',
+        repoName: 'Part_5_Advanced_Statistical_Methods_-Machine_Learning-',
+        aliases: ['part5advancedstatisticalmethodsmachinelearning'],
+        displayName: 'Advanced Statistical Methods - ML',
+        badge: 'data',
+        description:
+            'Data science and machine learning notebook series covering regression, classification, clustering, and model evaluation.',
+        stack: ['Python', 'Jupyter', 'Scikit-Learn', 'Pandas', 'NumPy']
     },
     {
-        name: "Real-time Analytics Pipeline",
-        desc: "A distributed system for processing millions of events per second. Integrated Kafka and Spark to provide real-time dashboards for user engagement metrics.",
-        tags: ["Python", "Kafka", "Spark", "PostgreSQL", "Redis"],
-        link: "https://github.com/OlaYK/analytics-pipeline"
+        url: 'https://github.com/OlaYK/polymarket_copy_bot',
+        repoName: 'polymarket_copy_bot',
+        aliases: ['polymarketcopybot'],
+        displayName: 'Polymarket Copy Bot',
+        badge: 'backend',
+        description:
+            'Automated copy-trading backend with watcher/executor workers, execution safeguards, and PostgreSQL-backed tracking.',
+        stack: ['Python', 'FastAPI', 'Web3', 'PostgreSQL', 'WebSockets']
     },
     {
-        name: "Advanced ML Methods",
-        desc: "Comprehensive Jupyter notebook series covering advanced statistical methods and machine learning — regression, classification, clustering, and model evaluation using scikit-learn. Applied across 40+ structured lessons.",
-        tags: ["Python", "Scikit-Learn", "Jupyter", "Regression", "ML", "Statistics"],
-        link: "https://github.com/OlaYK/Part_5_Advanced_Statistical_Methods_-Machine_Learning-"
+        url: 'https://github.com/OlaYK/portfolio',
+        repoName: 'portfolio',
+        displayName: 'Portfolio',
+        badge: 'general',
+        description:
+            'Next.js portfolio app with server-side GitHub project ingestion, backend-oriented ranking logic, and contact API integration.',
+        stack: ['Next.js', 'TypeScript', 'React', 'Resend', 'CSS']
     },
     {
-        name: "Base Testnet Contracts",
-        desc: "Smart contract deployment and testing on Coinbase's Base L2 testnet. Explores Ethereum-compatible contract patterns using Solidity — part of an ongoing exploration into on-chain development.",
-        tags: ["Solidity", "Base L2", "Ethereum", "Smart Contracts", "Foundry"],
-        link: "https://github.com/OlaYK/Base-test"
+        url: 'https://github.com/OlaYK/bizhandle',
+        repoName: 'bizhandle',
+        aliases: ['monidesk'],
+        displayName: 'MoniDesk (BizHandle)',
+        badge: 'backend',
+        description:
+            'Business operations backend with modular API design, persistence, and workflow orchestration for operational tooling.',
+        stack: ['Python', 'FastAPI', 'PostgreSQL', 'REST API', 'Backend']
     },
     {
-        name: "BizHandle",
-        desc: "A Python backend service for business operations management. Built with a modular backend structure (ibos-backend) focused on handling core business logic and data flows for SME use cases.",
-        tags: ["Python", "Backend", "REST API", "PostgreSQL"],
-        link: "https://github.com/OlaYK/bizhandle"
+        url: 'https://github.com/OlaYK/Token-Release-Schedule',
+        repoName: 'Token-Release-Schedule',
+        aliases: ['tokenreleaseschedule'],
+        displayName: 'Token Release Schedule',
+        badge: 'data',
+        description:
+            'Data-focused token release modeling and schedule analytics for scenario analysis, charting, and planning.',
+        stack: ['Python', 'Pandas', 'NumPy', 'Jupyter', 'Data Analysis']
     },
     {
-        name: "Portfolio Upgrade",
-        desc: "The very site you are viewing. Migrated from static HTML to a high-performance Next.js 15 application with dynamic GitHub integration and Resend email services.",
-        tags: ["Next.js", "TypeScript", "React", "Render", "Resend", "CSS3"],
-        link: "https://github.com/OlaYK/portfolio"
+        url: 'https://github.com/OlaYK/PMCT_V1',
+        repoName: 'PMCT_V1',
+        aliases: ['pmctv1'],
+        displayName: 'PMCT v1',
+        badge: 'backend',
+        description:
+            'Trading automation backend prototype centered on signal ingestion, execution rules, and transaction state management.',
+        stack: ['Python', 'FastAPI', 'PostgreSQL', 'Web3', 'Automation']
     }
 ];
 
+function normalizeRepoKey(value: string): string {
+    return value.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function getFocusLabel(focusTone: FocusTone): string {
+    if (focusTone === 'backend') {
+        return 'Backend Focus';
+    }
+    if (focusTone === 'data') {
+        return 'Data Science';
+    }
+    if (focusTone === 'backend-data') {
+        return 'Backend + Data';
+    }
+    if (focusTone === 'fullstack') {
+        return 'Backend + Full-Stack';
+    }
+    return 'General Engineering';
+}
+
+function normalizeTags(language: string | null, topics: string[], curatedTags: string[]): string[] {
+    const rawTags = [...curatedTags, language, ...topics].filter(Boolean) as string[];
+    const deduped = rawTags.filter((tag, index) => {
+        const normalizedTag = tag.toLowerCase();
+        return rawTags.findIndex((candidate) => candidate.toLowerCase() === normalizedTag) === index;
+    });
+    return deduped.slice(0, 6);
+}
+
+function findDynamicRepo(dynamicRepos: RankedRepo[], project: LockedProject): RankedRepo | undefined {
+    const nameCandidates = new Set([
+        normalizeRepoKey(project.repoName),
+        ...((project.aliases || []).map((alias) => normalizeRepoKey(alias)))
+    ]);
+    return dynamicRepos.find((repo) => nameCandidates.has(normalizeRepoKey(repo.name)));
+}
+
+function mapToCard(project: LockedProject, dynamicRepo?: RankedRepo): ProjectCard {
+    return {
+        name: project.displayName,
+        desc: dynamicRepo?.description?.trim() || project.description,
+        tags: normalizeTags(dynamicRepo?.language || null, dynamicRepo?.topics || [], project.stack),
+        link: dynamicRepo?.html_url || project.url,
+        focusLabel: getFocusLabel(project.badge),
+        focusTone: project.badge
+    };
+}
+
 export default async function Projects() {
-    let dynamicRepos: Repo[] = [];
+    const githubUsername = process.env.GITHUB_USERNAME || 'OlaYK';
+
+    let dynamicRepos: RankedRepo[] = [];
     try {
-        dynamicRepos = await getPinnedRepos('OlaYK');
+        dynamicRepos = await getPinnedRepos(githubUsername, 100);
     } catch (err) {
-        console.error('Error fetching dynamic repos:', err);
+        console.error('Error fetching GitHub repos:', err);
     }
 
-    // Combine logic:
-    // We want EXACTLY 8 high-quality projects.
-
-    const manualLinks = manualProjects.map(p => p.link.toLowerCase());
-
-    // 1. Process dynamic repos, but only those that HAVE descriptions and aren't meta-repos (already filtered in lib/github.ts)
-    const dynamicMapped = dynamicRepos
-        .filter(repo => !manualLinks.includes(repo.html_url.toLowerCase()))
-        .map(repo => ({
-            name: repo.name,
-            desc: repo.description, // Guaranteed to exist by lib/github.ts filter
-            tags: [repo.language, ...repo.topics].filter(Boolean).slice(0, 5),
-            link: repo.html_url
-        }));
-
-    // 2. Merge them, keeping manual ones at the top/front for curated order
-    const mergedProjects = [...manualProjects];
-
-    // 3. Fill up to 8 if we have fewer manual ones (though we have 8 manual ones already)
-    // Actually, let's just use the 8 manual ones + any high-star dynamic ones, then limit to 8.
-    // The user specifically wants these multi-stack ones.
-
-    // Final Sequence: take the best 8
-    const finalists = mergedProjects.slice(0, 8);
-
-    // Ensure portfolio is last if it exists in the list
-    const portfolioIdx = finalists.findIndex(p => p.link.toLowerCase().includes('portfolio'));
-    if (portfolioIdx > -1 && portfolioIdx !== finalists.length - 1) {
-        const [portfolio] = finalists.splice(portfolioIdx, 1);
-        finalists.push(portfolio);
-    }
+    const projectsToRender = LOCKED_PROJECTS.map((project) => {
+        const dynamicRepo = findDynamicRepo(dynamicRepos, project);
+        return mapToCard(project, dynamicRepo);
+    });
 
     return (
         <section id="projects">
-            <div className="section-label">02 — Projects</div>
-            <h2 className="section-title reveal">SELECTED<br />WORK</h2>
-            <div className="projects-grid">
-                {finalists.map((project, index) => (
-                    <div
-                        key={project.link}
-                        className="project-card reveal"
-                        style={{ transitionDelay: `${index * 0.1}s` }}
-                    >
-                        <div className="project-num">{(index + 1).toString().padStart(3, '0')}</div>
-                        <div className="project-name" style={{ textTransform: 'capitalize' }}>{project.name.replace(/-/g, ' ')}</div>
-                        <p className="project-desc">{project.desc}</p>
-                        <div className="project-tags">
-                            {project.tags.map(tag => (
-                                <span key={tag} className="tag">{tag}</span>
-                            ))}
-                        </div>
-                        <a
-                            href={project.link}
-                            target="_blank"
-                            rel="noopener"
-                            className="project-link"
-                        >
-                            View on GitHub
-                        </a>
-                    </div>
-                ))}
-            </div>
+            <div className="section-label">02 - Projects</div>
+            <h2 className="section-title reveal">
+                SELECTED
+                <br />
+                WORK
+            </h2>
+
+            <ProjectsRail projects={projectsToRender} />
 
             <div className="reveal" style={{ marginTop: '60px', textAlign: 'center' }}>
                 <a
-                    href="https://github.com/OlaYK"
+                    href={`https://github.com/${githubUsername}`}
                     target="_blank"
                     rel="noopener"
                     className="btn btn-ghost"
                     style={{ display: 'inline-flex', alignItems: 'center', gap: '12px' }}
                 >
                     View More on GitHub
-                    <span style={{ fontSize: '18px' }}>→</span>
+                    <span style={{ fontSize: '18px' }}>-&gt;</span>
                 </a>
             </div>
         </section>
