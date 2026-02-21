@@ -573,6 +573,8 @@ section {
 
 .projects-viewport {
   overflow: hidden;
+  width: var(--project-card-width);
+  margin: 0 auto;
 }
 
 .projects-side-btn {
