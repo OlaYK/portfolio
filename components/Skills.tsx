@@ -1,58 +1,119 @@
 'use client';
 
+const skillGroups = [
+    {
+        label: 'Languages',
+        skills: ['Python', 'SQL', 'TypeScript', 'JavaScript', 'Solidity']
+    },
+    {
+        label: 'Backend Frameworks',
+        skills: ['FastAPI', 'Django', 'Express', 'Node HTTP', 'REST APIs', 'WebSockets', 'Auth']
+    },
+    {
+        label: 'APIs and Integrations',
+        skills: [
+            'OpenAI API',
+            'Gemini',
+            'Groq',
+            'Anthropic',
+            'Google Auth',
+            'Cloudinary',
+            'Resend',
+            'Stripe',
+            'Paystack'
+        ]
+    },
+    {
+        label: 'Data and Geospatial',
+        skills: [
+            'Pandas',
+            'NumPy',
+            'Scikit-Learn',
+            'Jupyter',
+            'Rasterio',
+            'STAC',
+            'Element84',
+            'TiTiler',
+            'MapLibre'
+        ]
+    },
+    {
+        label: 'Storage and Infrastructure',
+        skills: ['PostgreSQL', 'Supabase', 'Neon DB', 'SQLAlchemy', 'Alembic', 'Docker', 'Render', 'Vercel']
+    },
+    {
+        label: 'Web3 and Domain APIs',
+        skills: [
+            'Web3.py',
+            'Hedera SDK',
+            'Polymarket CLOB',
+            'CelesTrak',
+            'Open-Meteo',
+            'OpenStreetMap',
+            'Nominatim',
+            'Photon'
+        ]
+    },
+    {
+        label: 'Frontend and Product',
+        skills: ['React', 'Next.js', 'Vite', 'Tailwind CSS', 'React Query', 'Recharts', 'Zod', 'Specs', 'Roadmaps']
+    }
+];
+
+const marqueeSkills = [
+    'Python',
+    'FastAPI',
+    'PostgreSQL',
+    'OpenAI API',
+    'Cloudinary',
+    'Supabase',
+    'Hedera SDK',
+    'MapLibre',
+    'Element84',
+    'Resend',
+    'Stripe',
+    'Paystack',
+    'Web3',
+    'CelesTrak',
+    'Product Strategy'
+];
+
 export default function Skills() {
     return (
         <section id="skills">
-            <div className="section-label">03 — Skills</div>
+            <div className="section-label reveal">06 // Skills</div>
             <div className="skills-layout">
                 <div className="reveal">
                     <h2 className="section-title">TECH<br />STACK</h2>
                     <p className="skills-intro">
-                        A pragmatic toolkit built around Python and data — with growing expertise in blockchain development and product thinking.
+                        A pragmatic toolkit pulled from recent project work: backend APIs, AI providers,
+                        payments, geospatial data, Web3 verification, and product delivery.
                     </p>
+                    <div className="skill-marquee" aria-hidden="true">
+                        <div className="skill-marquee-track">
+                            {[...marqueeSkills, ...marqueeSkills].map((skill, index) => (
+                                <span key={`${skill}-${index}`}>{skill}</span>
+                            ))}
+                        </div>
+                    </div>
                 </div>
+
                 <div className="skills-groups reveal" style={{ transitionDelay: '0.15s' }}>
-                    <div>
-                        <div className="skill-group-label">Languages</div>
-                        <div className="skill-list">
-                            <span className="skill-pill featured">Python</span>
-                            <span className="skill-pill featured">SQL</span>
-                            <span className="skill-pill">Solidity</span>
+                    {skillGroups.map((group) => (
+                        <div className="skill-panel" key={group.label}>
+                            <div className="skill-group-label">{group.label}</div>
+                            <div className="skill-list">
+                                {group.skills.map((skill, index) => (
+                                    <span
+                                        key={skill}
+                                        className={`skill-pill ${index < 2 ? 'featured' : ''}`}
+                                    >
+                                        {skill}
+                                    </span>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-
-                    <div>
-                        <div className="skill-group-label">Frameworks & Tools</div>
-                        <div className="skill-list">
-                            <span className="skill-pill featured">FastAPI</span>
-                            <span className="skill-pill featured">Django</span>
-                            <span className="skill-pill">PostgreSQL</span>
-                            <span className="skill-pill">Alembic</span>
-                            <span className="skill-pill">Git</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div className="skill-group-label">Data & ML</div>
-                        <div className="skill-list">
-                            <span className="skill-pill">Scikit-Learn</span>
-                            <span className="skill-pill">Pandas</span>
-                            <span className="skill-pill">Jupyter</span>
-                            <span className="skill-pill">Data Science</span>
-                            <span className="skill-pill">Machine Learning</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <div className="skill-group-label">Web3 & Product</div>
-                        <div className="skill-list">
-                            <span className="skill-pill">Smart Contracts</span>
-                            <span className="skill-pill">Polygon / Base L2</span>
-                            <span className="skill-pill">Tokenomics</span>
-                            <span className="skill-pill">Technical PM</span>
-                            <span className="skill-pill">Product Strategy</span>
-                        </div>
-                    </div>
+                    ))}
                 </div>
             </div>
         </section>

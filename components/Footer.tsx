@@ -5,7 +5,7 @@ export default function Footer() {
 
     return (
         <footer>
-            <span>© {currentYear} Olayinka Daniel</span>
+            <span>(c) {currentYear} Olayinka Daniel</span>
             <span>Lagos, Nigeria</span>
             <span>Built with precision.</span>
         </footer>

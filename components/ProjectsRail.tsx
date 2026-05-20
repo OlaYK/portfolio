@@ -9,8 +9,14 @@ type ProjectCard = {
     desc: string;
     tags: string[];
     link: string;
+    liveUrl?: string;
     focusLabel: string;
     focusTone: FocusTone;
+    role: string;
+    outcome: string;
+    proofPoints: string[];
+    lastUpdated: string;
+    lastUpdatedIso: string;
 };
 
 interface ProjectsRailProps {
@@ -106,14 +112,33 @@ export default function ProjectsRail({ projects }: ProjectsRailProps) {
             <div ref={viewportRef} className="projects-viewport">
                 <div ref={trackRef} className="projects-grid" style={trackStyle}>
                     {projects.map((project, index) => (
-                        <div
+                        <article
                             key={project.link}
                             className={`project-card ${index === activeIndex ? 'active' : ''}`}
                         >
-                            <div className="project-num">{(index + 1).toString().padStart(3, '0')}</div>
-                            <div className={`project-focus ${project.focusTone}`}>{project.focusLabel}</div>
+                            <div className="project-card-topline">
+                                <div className="project-num">{(index + 1).toString().padStart(3, '0')}</div>
+                                <div className="project-meta-group">
+                                    <div className="project-updated">Updated {project.lastUpdated}</div>
+                                    <div className={`project-focus ${project.focusTone}`}>{project.focusLabel}</div>
+                                </div>
+                            </div>
                             <div className="project-name">{project.name}</div>
                             <p className="project-desc">{project.desc}</p>
+
+                            <div className="project-facts">
+                                <div className="project-outcome">
+                                    <span>Role</span>
+                                    <strong>{project.role}</strong>
+                                </div>
+                            </div>
+
+                            <ul className="project-proof-list">
+                                {project.proofPoints.map((point) => (
+                                    <li key={`${project.link}-${point}`}>{point}</li>
+                                ))}
+                            </ul>
+
                             <div className="project-tags">
                                 {project.tags.map((tag) => (
                                     <span key={`${project.link}-${tag}`} className="tag">
@@ -121,10 +146,19 @@ export default function ProjectsRail({ projects }: ProjectsRailProps) {
                                     </span>
                                 ))}
                             </div>
-                            <a href={project.link} target="_blank" rel="noopener" className="project-link">
-                                View on GitHub
-                            </a>
-                        </div>
+                            <div className="project-actions">
+                                {project.liveUrl ? (
+                                    <a href={project.liveUrl} target="_blank" rel="noopener" className="project-link">
+                                        View Live
+                                        <span className="link-arrow" aria-hidden="true">&#8599;</span>
+                                    </a>
+                                ) : null}
+                                <a href={project.link} target="_blank" rel="noopener" className="project-link">
+                                    View on GitHub
+                                    <span className="link-arrow" aria-hidden="true">&#8599;</span>
+                                </a>
+                            </div>
+                        </article>
                     ))}
                 </div>
             </div>

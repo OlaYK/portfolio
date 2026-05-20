@@ -9,6 +9,7 @@ export interface Repo {
     fork: boolean;
     archived: boolean;
     updated_at: string;
+    pushed_at: string;
 }
 
 export interface RankedRepo extends Repo {
@@ -235,27 +236,37 @@ function getFocus(
     return 'general';
 }
 
-export async function getPinnedRepos(username: string, limit = 10): Promise<RankedRepo[]> {
-    const headers: HeadersInit = {
-        Accept: 'application/vnd.github+json',
-        'X-GitHub-Api-Version': '2022-11-28'
-    };
-
-    if (process.env.GITHUB_TOKEN) {
-        headers['Authorization'] = `Bearer ${process.env.GITHUB_TOKEN}`;
-    }
-
-    const response = await fetch(
-        `https://api.github.com/users/${username}/repos?sort=updated&per_page=100&type=owner`,
+async function fetchRepos(username: string, headers: HeadersInit): Promise<Response> {
+    return fetch(
+        `https://api.github.com/users/${username}/repos?sort=pushed&per_page=100&type=owner`,
         {
             headers,
             next: { revalidate: 3600 }
         }
     );
+}
+
+export async function getPinnedRepos(username: string, limit = 10): Promise<RankedRepo[]> {
+    const baseHeaders: HeadersInit = {
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28'
+    };
+
+    const headers: HeadersInit = { ...baseHeaders };
+    if (process.env.GITHUB_TOKEN) {
+        headers['Authorization'] = `Bearer ${process.env.GITHUB_TOKEN}`;
+    }
+
+    let response = await fetchRepos(username, headers);
+
+    if (response.status === 401 && process.env.GITHUB_TOKEN) {
+        console.warn('GitHub token rejected. Retrying public repository fetch without token.');
+        response = await fetchRepos(username, baseHeaders);
+    }
 
     if (!response.ok) {
-        if (response.status === 403) {
-            console.warn('GitHub API rate limit exceeded. Using fallback projects.');
+        if (response.status === 401 || response.status === 403) {
+            console.warn(`GitHub API unavailable (${response.status}). Using fallback projects.`);
             return [];
         }
         throw new Error(`Failed to fetch repos (${response.status})`);

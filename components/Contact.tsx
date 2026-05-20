@@ -23,19 +23,20 @@ export default function Contact() {
             } else {
                 setStatus('error');
             }
-        } catch (err) {
+        } catch {
             setStatus('error');
         }
     };
 
     return (
         <section id="contact">
-            <div className="section-label">04 — Contact</div>
+            <div className="section-label reveal">07 // Contact</div>
             <div className="contact-grid">
                 <div className="contact-inner">
                     <h2 className="section-title reveal">LET&apos;S<br />TALK</h2>
                     <p className="contact-tagline reveal">
-                        Open to backend roles, data projects, Web3 collaborations, and fast-paced environments where good problems get solved.
+                        Open to backend roles, data projects, Web3 collaborations, and fast-paced environments
+                        where good problems get solved.
                     </p>
                     <div className="contact-links reveal">
                         <a href="mailto:oolayinkadaniel@gmail.com" className="contact-row">
@@ -46,7 +47,7 @@ export default function Contact() {
                                     <div className="contact-value">oolayinkadaniel@gmail.com</div>
                                 </div>
                             </div>
-                            <span className="contact-arrow">→</span>
+                            <span className="contact-arrow" aria-hidden="true">&#8599;</span>
                         </a>
                         <a
                             href="https://www.linkedin.com/in/oolayinkadaniel/"
@@ -61,7 +62,22 @@ export default function Contact() {
                                     <div className="contact-value">oolayinkadaniel</div>
                                 </div>
                             </div>
-                            <span className="contact-arrow">→</span>
+                            <span className="contact-arrow" aria-hidden="true">&#8599;</span>
+                        </a>
+                        <a
+                            href="/resume/olayinka-od-backend-resume.pdf"
+                            target="_blank"
+                            rel="noopener"
+                            className="contact-row"
+                        >
+                            <div className="contact-row-left">
+                                <span className="contact-icon">cv</span>
+                                <div>
+                                    <div className="contact-label">Resume</div>
+                                    <div className="contact-value">Backend Resume PDF</div>
+                                </div>
+                            </div>
+                            <span className="contact-arrow" aria-hidden="true">&#8599;</span>
                         </a>
                     </div>
                 </div>
@@ -106,8 +122,14 @@ export default function Contact() {
                         >
                             {status === 'loading' ? 'Sending...' : 'Send Message'}
                         </button>
-                        {status === 'success' && <p style={{ color: 'var(--green)', fontSize: '14px' }}>Message sent successfully!</p>}
-                        {status === 'error' && <p style={{ color: '#ff4d4d', fontSize: '14px' }}>Failed to send message. Please try again.</p>}
+                        {status === 'success' && (
+                            <p style={{ color: 'var(--green)', fontSize: '14px' }}>Message sent successfully.</p>
+                        )}
+                        {status === 'error' && (
+                            <p style={{ color: '#ff4d4d', fontSize: '14px' }}>
+                                Failed to send message. Please try again.
+                            </p>
+                        )}
                     </form>
                 </div>
             </div>

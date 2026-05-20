@@ -9,15 +9,15 @@ export default function About() {
             <div className="about-grid">
                 <div className="about-text">
                     <p>
-                        I am a results-oriented Backend Developer and Data Analyst with a passion for building robust
-                        systems and deriving actionable insights from complex datasets. My background as a
-                        Technical Product Manager allows me to bridge the gap between complex engineering
-                        solutions and business requirements.
+                        I am a backend developer and data analyst who builds practical systems across APIs,
+                        data workflows, automation, and product-led MVPs. My recent work spans file metadata
+                        intelligence, satellite and geospatial analysis, orbital tracking, AI-assisted health
+                        tooling, Web3 credential verification, and trading automation.
                     </p>
                     <p>
-                        With years of experience in the tech industry, I've developed a keen eye for
-                        performance optimization and scalable architecture. I believe in writing clean,
-                        maintainable code that solves real-world problems.
+                        I work mostly with Python, FastAPI, SQL, PostgreSQL, JavaScript/TypeScript, and modern
+                        API integrations. I enjoy turning ambiguous ideas into structured backend services,
+                        data products, and workflows that are easier to deploy, inspect, and improve.
                     </p>
 
                     <div className="about-meta">
@@ -38,20 +38,20 @@ export default function About() {
 
                 <div className="about-stats">
                     <div className="stat-box">
-                        <div className="stat-num">20+</div>
-                        <div className="stat-label">Projects Completed</div>
+                        <div className="stat-num">30+</div>
+                        <div className="stat-label">Public Repositories</div>
                     </div>
                     <div className="stat-box">
-                        <div className="stat-num">23</div>
-                        <div className="stat-label">Happy Clients</div>
+                        <div className="stat-num">10+</div>
+                        <div className="stat-label">Backend / Data Systems</div>
                     </div>
                     <div className="stat-box">
-                        <div className="stat-num">500k+</div>
-                        <div className="stat-label">Lines of Code</div>
+                        <div className="stat-num">AI</div>
+                        <div className="stat-label">Geo / Web3 / Automation</div>
                     </div>
                     <div className="stat-box">
-                        <div className="stat-num">15+</div>
-                        <div className="stat-label">Tech Stack Tools</div>
+                        <div className="stat-num">2026</div>
+                        <div className="stat-label">Recent Active Builds</div>
                     </div>
                 </div>
             </div>

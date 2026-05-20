@@ -19,7 +19,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Olayinka Daniel — Backend Developer",
+  title: "Olayinka Daniel - Backend Developer",
   description: "Portfolio of Olayinka Daniel, a Backend Developer, Data Analyst, and Technical PM.",
 };
 

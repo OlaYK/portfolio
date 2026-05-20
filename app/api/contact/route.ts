@@ -23,7 +23,7 @@ export async function POST(request: Request) {
         }
 
         const { data, error } = await resend.emails.send({
-            from: 'Portfolio Contact <onboarding@resend.dev>', // Resend default for free tire
+            from: 'Portfolio Contact <onboarding@resend.dev>', // Resend default for free tier
             to: ['oolayinkadaniel@gmail.com'],
             subject: `New Message from ${name}`,
             replyTo: email,
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
         }
 
         return NextResponse.json({ success: true, data });
-    } catch (error) {
+    } catch {
         return NextResponse.json({ success: false, message: 'Internal Server Error' }, { status: 500 });
     }
 }
